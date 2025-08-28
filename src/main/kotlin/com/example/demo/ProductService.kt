@@ -113,17 +113,22 @@ class ProductService(
     }
 
     fun listProducts(): List<Product> = productRepository.findAll().sortedBy { it.id }
+    
+    fun searchProducts(query: String): List<Product> = 
+        if (query.isBlank()) listProducts() 
+        else productRepository.search(query).sortedBy { it.id }
 
     fun listVariants(productId: Long): List<Variant> = variantRepository.findAllByProduct_Id(productId)
 
     fun getProduct(productId: Long): Product? = productRepository.findById(productId).orElse(null)
 
     @Transactional
-    fun addProduct(title: String, handle: String?): Product {
+    fun addProduct(title: String, handle: String? = null, vendor: String? = null): Product {
         return productRepository.save(
             Product(
                 title = title,
-                handle = handle
+                handle = handle,
+                vendor = vendor
             )
         )
     }

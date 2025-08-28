@@ -1,25 +1,133 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Products</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - ShopSync</title>
+    
+    <!-- HTMX for dynamic updates -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simpledotcss/simple.min.css">
+    
+    <!-- Web Awesome CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/brands.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/solid.min.css">
+    
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.5;
+            color: #1f2937;
+            background-color: #f9fafb;
+        }
+        
+        /* Main content container */
+        .wa-main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+        
+        /* Action buttons */
+        .wa-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Loading indicator */
+        .wa-loading {
+            display: none;
+            padding: 2rem;
+            text-align: center;
+            color: #6b7280;
+            background: white;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .wa-loading i {
+            margin-right: 0.5rem;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <h1>Products</h1>
-
-    <div>
-        <button
-            hx-post="/fetch"
-            hx-target="#product-table"
-            hx-swap="outerHTML"
-        >Fetch Products</button>
-    </div>
-
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: site-header}"></div>
     
+    <!-- Main Content -->
+    <main class="wa-main">
+        <!-- Action Buttons -->
+        <div class="wa-actions">
+            <button
+                hx-post="/fetch"
+                hx-target="#table-container"
+                hx-swap="innerHTML"
+                onclick="document.getElementById('loading-indicator').style.display = 'flex';"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; background: #4f46e5; color: white; border: none; border-radius: 0.5rem; padding: 0.625rem 1.25rem; font-size: 0.9375rem; font-weight: 500; cursor: pointer; transition: all 0.2s;"
+            >
+                <i class="fa-solid fa-rotate"></i>
+                <span>Fetch Products</span>
+            </button>
+        </div>
 
-<div id="product-table"></div>
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="wa-loading">
+            <i class="fa-solid fa-spinner"></i>
+            <span>Loading products...</span>
+        </div>
 
+        <div id="table-container">
+            <!-- Table will be loaded here after fetch -->
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+
+            if (searchInput) {
+                // Focus the search input on page load if it's empty
+                if (!searchInput.value) {
+                    searchInput.focus();
+                }
+
+                // Handle keyboard navigation
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        searchInput.value = '';
+                        // Trigger search with empty value
+                        searchInput.dispatchEvent(new Event('input'));
+                        searchInput.dispatchEvent(new Event('search'));
+                        searchInput.focus();
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Blur to trigger any pending search
+                        searchInput.blur();
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            // Handle HTMX after request to hide loading indicator
+            document.body.addEventListener('htmx:afterRequest', function(evt) {
+                if (evt.detail.elt && evt.detail.elt.matches('[hx-post="/fetch"]')) {
+                    const loadingIndicator = document.getElementById('loading-indicator');
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

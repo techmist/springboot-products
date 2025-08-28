@@ -1,31 +1,186 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title th:text="'Variants for ' + ${product.title}">Variants</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simpledotcss/simple.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Variants for ' + ${product.title} + ' - ShopSync'">Variants - ShopSync</title>
+    
+    <!-- Web Awesome CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/brands.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/solid.min.css">
+    
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.5;
+            color: #1f2937;
+            background-color: #f9fafb;
+        }
+        
+        /* Main content container */
+        .va-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+        
+        /* Back link */
+        .va-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #4f46e5;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .va-back-link:hover {
+            color: #4338ca;
+        }
+        
+        /* Page header */
+        .va-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .va-header-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+        
+        .va-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        /* Variants table */
+        .va-table-container {
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .va-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .va-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #4b5563;
+            font-size: 0.875rem;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .va-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+        
+        .va-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .va-table tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        /* Price styling */
+        .va-price {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        /* Empty state */
+        .va-empty {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        .va-empty-icon {
+            font-size: 2.5rem;
+            color: #e5e7eb;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
-    <a href="/">← Back to products</a>
-    <h1 th:text="${product.title}">Product</h1>
-
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>SKU</th>
-            <th>Price</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="v : ${variants}">
-            <td th:text="${v.id}">1</td>
-            <td th:text="${v.title}">Title</td>
-            <td th:text="${v.sku}">SKU</td>
-            <td th:text="${v.price}">0.00</td>
-        </tr>
-        </tbody>
-    </table>
+    <!-- Header -->
+    <div th:replace="~{fragments/header :: site-header}"></div>
+    
+    <!-- Main Content -->
+    <div class="va-container">
+        <!-- Back Link -->
+        <a href="/" class="va-back-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to products</span>
+        </a>
+        
+        <!-- Page Header -->
+        <div class="va-header">
+            <div class="va-header-icon">
+                <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <h1 class="va-title" th:text="${product.title}">Product Title</h1>
+        </div>
+        
+        <!-- Variants Table -->
+        <div class="va-table-container">
+            <table class="va-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Variant</th>
+                        <th>SKU</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="v : ${variants}">
+                        <td style="color: #6b7280; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;" th:text="${v.id}">1</td>
+                        <td style="font-weight: 500;" th:text="${v.title}">Variant Title</td>
+                        <td>
+                            <div th:if="${v.sku}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #f3f4f6; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; color: #4b5563;">
+                                <i class="fa-regular fa-barcode" style="font-size: 0.75rem;"></i>
+                                <span th:text="${v.sku}">SKU-123</span>
+                            </div>
+                            <span th:unless="${v.sku}" style="color: #9ca3af; font-style: italic;">—</span>
+                        </td>
+                        <td class="va-price" th:text="'$' + ${#numbers.formatDecimal(v.price, 1, 2)}">$0.00</td>
+                    </tr>
+                    <tr th:if="${variants.isEmpty()}">
+                        <td colspan="4" class="va-empty">
+                            <div class="va-empty-icon">
+                                <i class="fa-regular fa-box-open"></i>
+                            </div>
+                            <div>No variants found for this product.</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>

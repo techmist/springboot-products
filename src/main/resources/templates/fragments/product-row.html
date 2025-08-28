@@ -1,9 +1,46 @@
-<tr th:fragment="row" xmlns:th="http://www.thymeleaf.org">
-    <td th:text="${p.id}">1</td>
-    <td th:text="${p.title}">Title</td>
-    <td th:text="${p.handle}">handle</td>
-    <td>
-        <a th:href="@{'/products/' + ${p.id}}">Variants</a>
+<tr th:fragment="row(id, title, vendor, handle)" xmlns:th="http://www.thymeleaf.org" style="border-bottom: 1px solid #f3f4f6;">
+    <td style="padding: 1rem; color: #6b7280; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
+        <span th:text="${id}">1</span>
+    </td>
+    <td style="padding: 1rem; font-weight: 500;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fa-regular fa-rectangle-list" style="color: #9ca3af;"></i>
+            <span th:text="${title}" style="color: #1f2937;">Title</span>
+        </div>
+    </td>
+    <td style="padding: 1rem;">
+        <div th:if="${vendor}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #f3f4f6; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; color: #4b5563;">
+            <i class="fa-regular fa-store" style="font-size: 0.75rem;"></i>
+            <span th:text="${vendor}">Vendor</span>
+        </div>
+        <span th:unless="${vendor}" style="color: #9ca3af; font-style: italic;">—</span>
+    </td>
+    <td style="padding: 1rem;">
+        <div th:if="${handle}" style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-regular fa-link" style="color: #9ca3af; font-size: 0.875rem;"></i>
+            <a th:href="'https://example.com/products/' + ${handle}" target="_blank" rel="noopener noreferrer" style="color: #4f46e5; text-decoration: none; font-size: 0.875rem;">
+                <span th:text="${handle}">handle</span>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left: 0.25rem; font-size: 0.75em; opacity: 0.7;"></i>
+            </a>
+        </div>
+        <span th:unless="${handle}" style="color: #9ca3af; font-style: italic;">—</span>
+    </td>
+    <td style="padding: 1rem; text-align: right;">
+        <a th:href="@{'/products/' + ${id}}" class="wa-button" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #f3f4f6; color: #4b5563; border: none; border-radius: 0.5rem; padding: 0.5rem 1rem; text-decoration: none; font-size: 0.875rem; transition: all 0.2s;">
+            <i class="fa-regular fa-cubes"></i>
+            <span>Variants</span>
+        </a>
     </td>
 </tr>
+
+<style>
+    tr:hover {
+        background-color: #f9fafb !important;
+    }
+    
+    .wa-button:hover {
+        background-color: #e5e7eb !important;
+        transform: translateY(-1px);
+    }
+</style>
  

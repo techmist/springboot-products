@@ -1,26 +1,59 @@
-<div th:fragment="table" id="product-table" xmlns:th="http://www.thymeleaf.org">
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Handle</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody id="product-rows">
-        <th:block th:each="p : ${products}">
-            <tr th:replace="fragments/product-row :: row"></tr>
-        </th:block>
-        </tbody>
-    </table>
+<div th:fragment="table" id="product-table" xmlns:th="http://www.thymeleaf.org" style="margin-top: 1.5rem; padding: 0 1rem;">
+    <!-- Add Product Form -->
+    <div style="background: white; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <h2 style="margin-top: 0; margin-bottom: 1.25rem; color: #1f2937; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-plus" style="color: #4f46e5;"></i>
+            Add New Product
+        </h2>
+        <form hx-post="/products" hx-target="#product-rows" hx-swap="beforeend" style="display: grid; gap: 1rem; grid-template-columns: 1fr 1fr 1fr auto; align-items: end;">
+            <div style="position: relative;">
+                <i class="fa-solid fa-tag" style="position: absolute; left: 0.75rem; top: 0.5rem; color: #9ca3af;"></i>
+                <input type="text" name="title" placeholder="Product title" required 
+                       style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.25rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;" />
+            </div>
+            <div style="position: relative;">
+                <i class="fa-solid fa-store" style="position: absolute; left: 0.75rem; top: 0.5rem; color: #9ca3af;"></i>
+                <input type="text" name="vendor" placeholder="Vendor (optional)" 
+                       style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.25rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;" />
+            </div>
+            <div style="position: relative;">
+                <i class="fa-solid fa-link" style="position: absolute; left: 0.75rem; top: 0.5rem; color: #9ca3af;"></i>
+                <input type="text" name="handle" placeholder="Handle (optional)" 
+                       style="width: 100%; padding: 0.5rem 1rem 0.5rem 2.25rem; border: 1px solid #e5e7eb; border-radius: 0.5rem;" />
+            </div>
+            <button type="submit" style="background: #4f46e5; color: white; border: none; border-radius: 0.5rem; padding: 0.5rem 1.25rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-plus"></i>
+                Add
+            </button>
+        </form>
+    </div>
 
-
-    <h2>Add Product</h2>
-    <form hx-post="/products" hx-target="#product-rows" hx-swap="beforeend">
-        <input type="text" name="title" placeholder="Title" required />
-        <input type="text" name="handle" placeholder="Handle (optional)" />
-        <button type="submit">Add</button>
-    </form>
+    <!-- Products Table -->
+    <div style="background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                <tr>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #4b5563; font-size: 0.875rem;">ID</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #4b5563; font-size: 0.875rem;">Title</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #4b5563; font-size: 0.875rem;">Vendor</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: #4b5563; font-size: 0.875rem;">Handle</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #4b5563; font-size: 0.875rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-rows" style="background: white;">
+                <th:block th:each="p : ${products}">
+                    <tr th:replace="~{fragments/product-row :: row(${p.id}, ${p.title}, ${p.vendor}, ${p.handle})}"></tr>
+                </th:block>
+                <tr th:if="${products.isEmpty()}">
+                    <td colspan="5" style="padding: 2rem; text-align: center; color: #6b7280;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                            <i class="fa-regular fa-box-open" style="font-size: 2rem; color: #e5e7eb;"></i>
+                            <div>No products found. Add your first product above.</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
  

@@ -10,9 +10,25 @@ class ProductController(
     private val productService: ProductService
 ) {
     @GetMapping("/")
-    fun index(model: Model): String {
-        model.addAttribute("products", productService.listProducts())
-        return "index"
+    fun index(
+        @RequestParam(name = "q", required = false, defaultValue = "") query: String,
+        @RequestHeader(value = "HX-Request", required = false) isHtmx: Boolean?,
+        model: Model
+    ): String {
+        val products = if (query.isNotBlank()) {
+            productService.searchProducts(query)
+        } else {
+            productService.listProducts()
+        }
+        model.addAttribute("products", products)
+        model.addAttribute("searchQuery", query)
+        
+        // Return only the table fragment for HTMX requests
+        return if (isHtmx == true) {
+            "fragments/product-table :: table"
+        } else {
+            "index"
+        }
     }
 
     
@@ -20,18 +36,22 @@ class ProductController(
     fun fetch(model: Model): String {
         productService.fetchAndStore()
         model.addAttribute("products", productService.listProducts())
-       return "fragments/product-table :: table"
+        return "fragments/product-table"
     }
 
     
     @PostMapping("/products")
     fun addProduct(
         @RequestParam title: String,
+        @RequestParam(required = false) vendor: String?,
         @RequestParam(required = false) handle: String?,
         model: Model
     ): String {
-        val product = productService.addProduct(title, handle)
-        model.addAttribute("p", product)
+        val product = productService.addProduct(title, handle, vendor)
+        model.addAttribute("id", product.id)
+        model.addAttribute("title", product.title)
+        model.addAttribute("vendor", product.vendor)
+        model.addAttribute("handle", product.handle)
         return "fragments/product-row :: row"
     }
 
@@ -41,6 +61,19 @@ class ProductController(
         model.addAttribute("product", product)
         model.addAttribute("variants", productService.listVariants(id))
         return "variants"
+    }
+
+    @GetMapping("/api/products/search")
+    @ResponseBody
+    fun searchProducts(@RequestParam("q") query: String): List<Map<String, Any?>> {
+        return productService.searchProducts(query).map { product ->
+            mapOf(
+                "id" to product.id,
+                "title" to product.title,
+                "vendor" to product.vendor,
+                "handle" to product.handle
+            )
+        }
     }
 
     @GetMapping("/debug/fetch")

@@ -15,5 +15,7 @@ data class Product(
     @Column(nullable = false)
     var title: String,
 
-    var handle: String? = null
+    var handle: String? = null,
+    
+    var vendor: String? = null
 )

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Web Awesome CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/brands.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/solid.min.css">
+    
+    <style>
+        /* Base styles */
+        body { 
+            margin: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-hover: #f9fafb;
+        }
+        
+        /* Header styles */
+        .wa-header {
+            position: sticky;
+            top: 0;
+            height: 70px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 50;
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .wa-container {
+            max-width: 1400px;
+            height: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Logo & Brand */
+        .wa-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            margin-right: 2.5rem;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        
+        .wa-brand:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .wa-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            color: white;
+            font-size: 1.1rem;
+            margin-right: 0.85rem;
+            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+        }
+        
+        .wa-brand-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Search bar */
+        .wa-search {
+            position: relative;
+            width: 250px;
+            margin-right: 1.5rem;
+        }
+        
+        .wa-search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .wa-search-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 0.95rem;
+        }
+        
+        .wa-search input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.75rem;
+            font-size: 0.95rem;
+            color: var(--text-color);
+            background: #f8f9fa;
+            border: 1.5px solid var(--border-color);
+            border-radius: 0.6rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            font-weight: 400;
+        }
+        
+        .wa-search input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: white;
+        }
+        
+        .wa-search input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        /* User Menu */
+        .wa-user-menu {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .wa-user-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .wa-user-button:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        .wa-user-button i {
+            font-size: 1.1rem;
+            color: #4b5563;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .wa-container {
+                padding: 0 1.25rem;
+            }
+            
+            .wa-brand-text {
+                display: none;
+            }
+            
+            .wa-search {
+                margin: 0 0.75rem 0 0;
+                width: 200px;
+            }
+
+            .wa-logo {
+                width: 36px;
+                height: 36px;
+                margin-right: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wa-container {
+                padding: 0 1rem;
+            }
+            
+            .wa-search {
+                margin: 0 0.5rem 0 0;
+                width: 160px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="wa-header" th:fragment="site-header">
+        <div class="wa-container">
+            <!-- Logo & Brand -->
+            <a href="/" class="wa-brand">
+                <div class="wa-logo">
+                    <i class="fa-solid fa-box"></i>
+                </div>
+                <span class="wa-brand-text">ShopSync</span>
+            </a>
+            
+            <!-- User Menu -->
+            <div class="wa-user-menu">
+                <div class="wa-search">
+                    <div hx-target="#product-table" class="wa-search-container">
+                        <i class="fa-solid fa-search wa-search-icon"></i>
+                        <input type="search" 
+                               name="q" 
+                               th:value="${searchQuery}"
+                               placeholder="Search products..." 
+                               autocomplete="off" 
+                               hx-get="/"
+                               hx-trigger="keyup changed delay:300ms, search" 
+                               hx-push-url="true" 
+                               hx-replace-url="true" />
+                    </div>
+                </div>
+                <button class="wa-user-button">
+                    <i class="fa-regular fa-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+</body>
+</html>
