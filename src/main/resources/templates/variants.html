@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="'Variants for ' + ${product.title}">Variants</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simpledotcss/simple.min.css">
+</head>
+<body>
+    <a href="/">← Back to products</a>
+    <h1 th:text="${product.title}">Product</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>SKU</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="v : ${variants}">
+            <td th:text="${v.id}">1</td>
+            <td th:text="${v.title}">Title</td>
+            <td th:text="${v.sku}">SKU</td>
+            <td th:text="${v.price}">0.00</td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>

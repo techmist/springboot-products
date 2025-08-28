@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS products (
+    id BIGSERIAL PRIMARY KEY,
+    external_id BIGINT UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    handle VARCHAR(255)
+);

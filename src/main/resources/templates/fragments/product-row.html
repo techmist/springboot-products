@@ -1,0 +1,9 @@
+<tr th:fragment="row" xmlns:th="http://www.thymeleaf.org">
+    <td th:text="${p.id}">1</td>
+    <td th:text="${p.title}">Title</td>
+    <td th:text="${p.handle}">handle</td>
+    <td>
+        <a th:href="@{'/products/' + ${p.id}}">Variants</a>
+    </td>
+</tr>
+ 

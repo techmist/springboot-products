@@ -1,0 +1,26 @@
+<div th:fragment="table" id="product-table" xmlns:th="http://www.thymeleaf.org">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Handle</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="product-rows">
+        <th:block th:each="p : ${products}">
+            <tr th:replace="fragments/product-row :: row"></tr>
+        </th:block>
+        </tbody>
+    </table>
+
+
+    <h2>Add Product</h2>
+    <form hx-post="/products" hx-target="#product-rows" hx-swap="beforeend">
+        <input type="text" name="title" placeholder="Title" required />
+        <input type="text" name="handle" placeholder="Handle (optional)" />
+        <button type="submit">Add</button>
+    </form>
+</div>
+ 

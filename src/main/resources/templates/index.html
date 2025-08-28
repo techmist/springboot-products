@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Products</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simpledotcss/simple.min.css">
+</head>
+<body>
+    <h1>Products</h1>
+
+    <div>
+        <button
+            hx-post="/fetch"
+            hx-target="#product-table"
+            hx-swap="outerHTML"
+        >Fetch Products</button>
+    </div>
+
+    
+
+<div id="product-table"></div>
+
+</body>
+</html>
