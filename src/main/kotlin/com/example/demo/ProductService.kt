@@ -132,4 +132,34 @@ class ProductService(
             )
         )
     }
+    
+    @Transactional
+    fun deleteProduct(id: Long) {
+        val product = productRepository.findById(id)
+            .orElseThrow { NoSuchElementException("Product not found with id: $id") }
+        
+        // First delete all variants associated with the product
+        variantRepository.deleteAllByProductId(id)
+        
+        // Then delete the product
+        productRepository.delete(product)
+        
+        // Store the deleted product data for potential undo
+        // In a production environment, consider using a proper soft delete approach
+        // with an 'is_deleted' flag and a 'deleted_at' timestamp
+        log.info("Product deleted: {}", product)
+    }
+    
+    @Transactional
+    fun restoreProduct(id: Long): Product {
+        // In a real implementation, this would restore a soft-deleted product
+        // For now, we'll just throw an exception since we don't have soft delete implemented
+        throw UnsupportedOperationException("Product restoration is not implemented. This would restore a soft-deleted product in a real implementation.")
+        
+        // In a real implementation with soft delete, it would look something like:
+        // val product = productRepository.findDeletedById(id)
+        //     ?: throw NoSuchElementException("No deleted product found with id: $id")
+        // product.isDeleted = false
+        // return productRepository.save(product)
+    }
 }

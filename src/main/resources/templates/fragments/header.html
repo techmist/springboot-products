@@ -1,235 +1,160 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Web Awesome CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/brands.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@webawesome/webawesome/css/solid.min.css">
-    
+
+<div th:fragment="site-header">
+
     <style>
-        /* Base styles */
-        body { 
-            margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
             --text-color: #1f2937;
-            --text-muted: #6b7280;
+            --muted-color: #6b7280;
+            --header-bg: rgba(255, 255, 255, 0.95);
             --border-color: #e5e7eb;
-            --bg-hover: #f9fafb;
         }
+
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background-color: #f9fafb;
+        }
+
         
-        /* Header styles */
-        .wa-header {
+        .header {
             position: sticky;
             top: 0;
-            height: 70px;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            background: var(--header-bg);
             border-bottom: 1px solid var(--border-color);
-            z-index: 50;
             backdrop-filter: blur(8px);
-            background-color: rgba(255, 255, 255, 0.85);
+            height: 64px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
         }
-        
-        .wa-container {
-            max-width: 1400px;
-            height: 100%;
+
+        .header-container {
+            width: 100%;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 2rem;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
-        
-        /* Logo & Brand */
-        .wa-brand {
+
+        .logo {
             display: flex;
             align-items: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
             text-decoration: none;
-            margin-right: 2.5rem;
-            transition: transform 0.2s ease, opacity 0.2s ease;
         }
-        
-        .wa-brand:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-        
-        .wa-logo {
+
+        .logo-icon {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            margin-right: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary-color), #6366f1);
-            color: white;
-            font-size: 1.1rem;
-            margin-right: 0.85rem;
-            box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+            font-size: 1rem;
         }
-        
-        .wa-brand-text {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-color);
-            letter-spacing: -0.02em;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Search bar */
-        .wa-search {
+
+        .search {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 1.5rem;
             position: relative;
-            width: 250px;
-            margin-right: 1.5rem;
         }
-        
-        .wa-search-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .wa-search-icon {
-            position: absolute;
-            left: 1rem;
-            color: var(--text-muted);
-            pointer-events: none;
-            font-size: 0.95rem;
-        }
-        
-        .wa-search input {
+
+        .search input {
             width: 100%;
-            padding: 0.7rem 1rem 0.7rem 2.75rem;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             font-size: 0.95rem;
+            background: #f1f5f9;
             color: var(--text-color);
-            background: #f8f9fa;
-            border: 1.5px solid var(--border-color);
-            border-radius: 0.6rem;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-            font-weight: 400;
         }
-        
-        .wa-search input:focus {
+
+        .search input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-            background: white;
-        }
-        
-        .wa-search input::placeholder {
-            color: var(--text-muted);
-            opacity: 0.8;
-            font-weight: 400;
+            background: #fff;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
         }
 
-        /* User Menu */
-        .wa-user-menu {
-            margin-left: auto;
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-color);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .user-actions {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
-        .wa-user-button {
+        .user-button {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             border: 1px solid var(--border-color);
-            background: white;
-            color: var(--text-color);
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            transition: 0.2s ease;
         }
 
-        .wa-user-button:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
-            transform: translateY(-1px);
+        .user-button:hover {
+            background: #f3f4f6;
         }
 
-        .wa-user-button i {
+        .user-button i {
+            color: var(--muted-color);
             font-size: 1.1rem;
-            color: #4b5563;
         }
-        
-        /* Responsive adjustments */
+
         @media (max-width: 768px) {
-            .wa-container {
-                padding: 0 1.25rem;
-            }
-            
-            .wa-brand-text {
+            .search {
                 display: none;
-            }
-            
-            .wa-search {
-                margin: 0 0.75rem 0 0;
-                width: 200px;
-            }
-
-            .wa-logo {
-                width: 36px;
-                height: 36px;
-                margin-right: 0.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .wa-container {
-                padding: 0 1rem;
-            }
-            
-            .wa-search {
-                margin: 0 0.5rem 0 0;
-                width: 160px;
             }
         }
     </style>
-</head>
+    <header class="header">
+        <div class="header-container">
 
-<body>
-    <header class="wa-header" th:fragment="site-header">
-        <div class="wa-container">
-            <!-- Logo & Brand -->
-            <a href="/" class="wa-brand">
-                <div class="wa-logo">
-                    <i class="fa-solid fa-box"></i>
-                </div>
-                <span class="wa-brand-text">ShopSync</span>
-            </a>
             
-            <!-- User Menu -->
-            <div class="wa-user-menu">
-                <div class="wa-search">
-                    <div hx-target="#product-table" class="wa-search-container">
-                        <i class="fa-solid fa-search wa-search-icon"></i>
-                        <input type="search" 
-                               name="q" 
-                               th:value="${searchQuery}"
-                               placeholder="Search products..." 
-                               autocomplete="off" 
-                               hx-get="/"
-                               hx-trigger="keyup changed delay:300ms, search" 
-                               hx-push-url="true" 
-                               hx-replace-url="true" />
-                    </div>
-                </div>
-                <button class="wa-user-button">
+            <a href="/" class="logo">
+                <span class="logo-icon">
+                    <i class="fa-solid fa-box"></i>
+                </span>
+                TrakMart
+            </a>
+
+            
+            <div class="search">
+                <i class="fa-solid fa-search search-icon"></i>
+                <input type="text" placeholder="Search products..." name="q" th:value="${searchQuery}" hx-get="/"
+                    hx-trigger="keyup changed delay:300ms, search" hx-target="#product-table" hx-push-url="true"
+                    hx-replace-url="true" />
+            </div>
+
+            
+            <div class="user-actions">
+                <button class="user-button">
                     <i class="fa-regular fa-user"></i>
                 </button>
             </div>
+
         </div>
     </header>
-</body>
-</html>
+</div>
