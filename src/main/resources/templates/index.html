@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - TrakMart</title>
     
+    <!-- Add CSRF Token -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-          integrity="sha512-o8CzL2+ZJfO7GLR2pYt3EZ+FQ5WyBFjvuFwK2MsmrE7v4nNnCrruQk9R8+kT1O9q37rM6nLMRzI8Gd6WcU4zXw=="
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <style>
@@ -111,7 +114,7 @@
             100% { transform: rotate(360deg); }
         }
     </style>
-    <!-- Toast Notification Styles -->
+    
     <style>
         #toast-container {
             position: fixed;
@@ -211,7 +214,7 @@
     
     <main class="wa-main" id="main-content">
         <div id="table-container">
-            <!-- Table will be loaded here after fetching -->
+            
         </div>
 
         
@@ -225,10 +228,10 @@
         </div>
     </main>
     
-    <!-- Toast Container -->
+    
     <div id="toast-container"></div>
     
-    <!-- Toast Template (hidden by default) -->
+    
     <div id="toast-template" class="toast" style="display: none;">
         <div class="toast-icon">
             <i class="fas fa-check-circle"></i>
@@ -240,6 +243,7 @@
     </div>
 
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('search-input');
 
@@ -248,7 +252,7 @@
                 if (!searchInput.value) {
                     searchInput.focus();
                 }
-
+            
                 
                 searchInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape') {
@@ -266,7 +270,7 @@
                 });
             }
 
-            
+        
             document.body.addEventListener('htmx:afterRequest', function(evt) {
                 if (evt.detail.elt && evt.detail.elt.matches('[hx-post="/fetch"]')) {
                     const loadingIndicator = document.getElementById('loading-indicator');
@@ -276,7 +280,7 @@
                 }
             });
             
-            // Handle HTMX after request events for delete operations
+            
             document.body.addEventListener('htmx:afterRequest', function(evt) {
                 if (evt.detail.elt && evt.detail.elt.closest('button.delete-button') && 
                     evt.detail.elt.hasAttribute('hx-delete') && 
@@ -289,7 +293,6 @@
                     
                     showToast(`Product "${productName}" deleted successfully.`, 'success', {
                         undo: () => {
-                            // Send a request to restore the product
                             htmx.ajax('POST', `/api/products/${productId}/restore`, {
                                 target: '#product-rows',
                                 swap: 'beforeend',
@@ -305,69 +308,53 @@
                 }
             });
             
-            // Close button handler for toasts
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('toast-close')) {
-                    e.target.closest('.toast').remove();
-                }
+            // Show toast when a product is deleted via HTMX
+            document.body.addEventListener('showToast', function(e) {
+                showToast(e.detail.message, e.detail.type);
             });
-        });
-        
-        // Show toast notification
-        function showToast(message, type = 'success', options = {}) {
-            const container = document.getElementById('toast-container');
-            const template = document.getElementById('toast-template').cloneNode(true);
-            const toast = template;
             
-            // Set toast content and type
-            const iconMap = {
-                success: 'check-circle',
-                error: 'exclamation-circle',
-                warning: 'exclamation-triangle'
-            };
-            
-            toast.style.display = 'flex';
-            toast.classList.add('show', type);
-            toast.querySelector('.toast-message').textContent = message;
-            toast.querySelector('.toast-icon i').className = `fas fa-${iconMap[type] || 'info-circle'}`;
-            
-            // Add undo button if provided
-            if (options.undo) {
-                const undoBtn = document.createElement('span');
-                undoBtn.className = 'toast-undo';
-                undoBtn.textContent = 'Undo';
-                undoBtn.onclick = function(e) {
-                    e.stopPropagation();
-                    options.undo();
+            function showToast(message, type = 'success', options = {}) {
+                const container = document.getElementById('toast-container');
+                const template = document.getElementById('toast-template').cloneNode(true);
+                const toast = template;
+                
+                // Icon mapping for different toast types
+                const iconMap = {
+                    success: 'check-circle',
+                    error: 'exclamation-circle',
+                    warning: 'exclamation-triangle'
+                };
+                
+                // Set up toast content and styling
+                toast.style.display = 'flex';
+                toast.classList.add('show', type);
+                toast.querySelector('.toast-message').textContent = message;
+                toast.querySelector('.toast-icon i').className = `fas fa-${iconMap[type] || 'info-circle'}`;
+                
+                // Add undo button if needed
+                if (options.undo) {
+                    const undoBtn = document.createElement('span');
+                    undoBtn.className = 'toast-undo';
+                    undoBtn.textContent = 'Undo';
+                    undoBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        options.undo();
+                        toast.remove();
+                    };
+                    toast.querySelector('.toast-message').appendChild(undoBtn);
+                }
+                
+                // Set up close button
+                const closeBtn = toast.querySelector('.toast-close');
+                closeBtn.onclick = function() {
                     toast.remove();
                 };
-                toast.querySelector('.toast-message').appendChild(undoBtn);
-            }
-            
-            // Add close button functionality
-            const closeBtn = toast.querySelector('.toast-close');
-            closeBtn.onclick = function() {
-                toast.remove();
-            };
-            
-            // Add to container and show
-            container.appendChild(toast);
-            
-            // Auto-remove after delay
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.classList.remove('show');
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toast.remove();
-                        }
-                    }, 300);
-                }
-            }, options.duration || 5000);
-            
-            // Pause auto-remove on hover
-            toast.addEventListener('mouseenter', function() {
-                toast._timeout = setTimeout(() => {
+                
+                // Add toast to the container
+                container.appendChild(toast);
+                
+                // Auto-remove toast after delay
+                setTimeout(() => {
                     if (toast.parentNode) {
                         toast.classList.remove('show');
                         setTimeout(() => {
@@ -376,12 +363,26 @@
                             }
                         }, 300);
                     }
-                }, 1000);
-            });
-            
-            toast.addEventListener('mouseleave', function() {
-                clearTimeout(toast._timeout);
-            });
+                }, options.duration || 5000);
+                
+                // Add hover behavior
+                toast.addEventListener('mouseenter', function() {
+                    toast._timeout = setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.classList.remove('show');
+                            setTimeout(() => {
+                                if (toast.parentNode) {
+                                    toast.remove();
+                                }
+                            }, 300);
+                        }
+                    }, 1000);
+                });
+                
+                toast.addEventListener('mouseleave', function() {
+                    clearTimeout(toast._timeout);
+                });
+            }
         }
     </script>
 </body>

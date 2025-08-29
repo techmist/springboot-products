@@ -95,36 +95,30 @@ class ProductController(
     @ResponseBody
     fun deleteProduct(
         @PathVariable id: Long,
-        @RequestHeader(value = "HX-Request", required = false) isHtmx: Boolean?,
         response: HttpServletResponse
     ): ResponseEntity<String> {
+        log.info("Processing delete request for product id: $id")
+        
         return try {
             val product = productService.getProduct(id)
-                ?: throw NoSuchElementException("Product not found with id: $id")
-                
-            // Store the product before deletion (for undo)
+                ?: return ResponseEntity.notFound().build()
+            
+            // Store for possible undo
             deletedProducts[id] = product
             
+            // Delete the product
             productService.deleteProduct(id)
+            log.info("Successfully deleted product with id: $id")
             
-            if (isHtmx == true) {
-                // Return empty response with 200 OK for HTMX
-                response.addHeader("HX-Trigger", "productDeleted")
-                response.addHeader("HX-Reswap", "delete")
-                response.addHeader("HX-Trigger-After-Swap", "recountProducts")
-                ResponseEntity.ok().body("")
-            } else {
-                ResponseEntity.ok("Product deleted successfully")
-            }
+            // Return success status - HTMX will remove the row
+            response.addHeader("HX-Trigger", "productDeleted")
+            ResponseEntity.ok().build()
+            
         } catch (ex: Exception) {
             log.error("Error deleting product $id", ex)
-            if (isHtmx == true) {
-                response.addHeader("HX-Retarget", "#error-message")
-                response.addHeader("HX-Reswap", "innerHTML")
-                ResponseEntity.badRequest().body("Error deleting product: ${ex.message}")
-            } else {
-                ResponseEntity.badRequest().body("Error deleting product: ${ex.message}")
-            }
+            response.addHeader("HX-Retarget", "#error-message")
+            response.addHeader("HX-Reswap", "innerHTML")
+            ResponseEntity.badRequest().body("Error deleting product: ${ex.message}")
         }
     }
     
